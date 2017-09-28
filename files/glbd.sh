@@ -34,6 +34,7 @@ EXEC_PATH=/usr/local/sbin:/usr/sbin
 PID_FILE="/var/run/$prog.pid"
 CONTROL_FIFO="/var/run/$prog.fifo"
 THREADS=4
+NC_OPTIONS="-q 1"
 
 if [ -f /etc/redhat-release ]
 then
@@ -131,7 +132,7 @@ getinfo() {
 		echo "Port for control communication is not configured."
 		exit 1
 	fi
-	echo getinfo | nc $CONTROL_IP $CONTROL_PORT && exit 0
+	echo getinfo | nc $NC_OPTIONS $CONTROL_IP $CONTROL_PORT && exit 0
 	echo "[`date`] $prog: failed to query 'getinfo' from '$CONTROL_ADDR'"
 	exit 1
 }
@@ -141,7 +142,7 @@ getstats() {
 		echo "Port for control communication is not configured."
 		exit 1
 	fi
-	echo getstats | nc $CONTROL_IP $CONTROL_PORT && exit 0
+	echo getstats | nc $NC_OPTIONS $CONTROL_IP $CONTROL_PORT && exit 0
 	echo "[`date`] $prog: failed to query 'getstats' from '$CONTROL_ADDR'"
 	exit 1
 }
@@ -155,7 +156,7 @@ add() {
 		echo "Usage: $0 add <ip>:<port>[:<weight>]"
 		exit 1
 	fi
-	if [ "`echo "$1" | nc $CONTROL_IP $CONTROL_PORT`" = "Ok" ]; then
+	if [ "`echo "$1" | nc $NC_OPTIONS $CONTROL_IP $CONTROL_PORT`" = "Ok" ]; then
 		echo "[`date`] $prog: added '$1' successfully"
 		#getinfo
 		exit 0
@@ -173,7 +174,7 @@ remove() {
 		echo "Usage: $0 remove <ip>:<port>"
 		exit 1
 	fi
-	if [ "`echo "$1:-1" | nc $CONTROL_IP $CONTROL_PORT`" = "Ok" ]; then
+	if [ "`echo "$1:-1" | nc $NC_OPTIONS $CONTROL_IP $CONTROL_PORT`" = "Ok" ]; then
 		echo "[`date`] $prog: removed '$1' successfully"
 		#getinfo
 		exit 0
@@ -191,7 +192,7 @@ drain() {
 		echo "Usage: $0 drain <ip>:<port>"
 		exit 1
 	fi
-	if [ "`echo "$1:0" | nc $CONTROL_IP $CONTROL_PORT`" = "Ok" ]; then
+	if [ "`echo "$1:0" | nc $NC_OPTIONS $CONTROL_IP $CONTROL_PORT`" = "Ok" ]; then
 		echo "[`date`] $prog: '$1' was set to drain connections"
 		#getinfo
 		exit 0
