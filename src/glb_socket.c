@@ -306,6 +306,13 @@ glb_socket_create (const struct sockaddr_in* addr, uint32_t const optflags)
     if ((err = glb_socket_setopt (sock, optflags)))    goto error;
 #endif /* GLBD */
 
+    int reuse = 1;
+    if ((err = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof(reuse)) < 0))	goto error;
+
+#ifdef SO_REUSEPORT
+    if ((err = setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, (const char*)&reuse, sizeof(reuse)) < 0)) 	goto error;
+#endif
+
     if (bind (sock, (struct sockaddr *) addr, sizeof (*addr)) < 0)
     {
         err = -errno;

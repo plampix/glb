@@ -20,7 +20,7 @@
 
 ### BEGIN INIT INFO
 # Provides: glbd
-# Required-Start: $local_fs
+# Required-Start: $local_fs $network
 # Required-Stop: $local_fs
 # Default-Start:  2 3 4 5
 # Default-Stop: 9 0
@@ -61,6 +61,8 @@ else
 fi
 
 wait_for_connections_to_drop() {
+	sleep 1s
+	return 0
 	while (netstat -na | grep -m 1 ":$LISTEN_PORT " > /dev/null); do
 		echo "[`date`] $prog: waiting for lingering sockets to clear up..."
 		sleep 1s
