@@ -35,9 +35,9 @@ allocate_resources(const glb_cnf_t* conf,
                    int* listen_sock)
 {
     gid_t gid = getegid();
-    struct group *grp = getgrnam(RUN_AS_USER);  
+    struct group *grp = getgrnam(RUN_AS_USER);
     setegid(grp->gr_gid);
-    mode_t um = umask(0); 
+    mode_t um = umask(0);
     if (mkfifo (conf->fifo_name, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)) {
         setegid(gid);
         umask(um);
