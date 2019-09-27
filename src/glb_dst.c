@@ -40,13 +40,18 @@ glb_dst_parse (glb_dst_t* dst, const char* s, uint16_t default_port)
     if (NULL != endptr)
         addr_len = endptr - s;
     else
-        addr_len = strlen (s);
+        addr_len = strlen (s) + 1;
     if (addr_len > dst_ip_len_max) {
         glb_log_error ("Host address too long: %s\n", s);
         return -EINVAL;
     }
 
-    strncpy (addr_str, s, addr_len); // this now contains only host address
+    if (addr_len < dst_ip_len_max)
+      strncpy (addr_str, s, addr_len); // this now contains only host address
+    else {
+        glb_log_error ("Host address too long: %s\n", s);
+        return -EINVAL;
+    }
 
     ret = 1;
     if (NULL == endptr) // string is over
